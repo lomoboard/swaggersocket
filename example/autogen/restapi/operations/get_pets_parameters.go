@@ -10,6 +10,7 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/go-openapi/strfmt"
 )
 
 // NewGetPetsParams creates a new GetPetsParams object
@@ -28,6 +29,11 @@ type GetPetsParams struct {
 
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
+
+	/*Correlation id if swagger over websocket
+	  In: header
+	*/
+	XCorrelationID *string
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -39,8 +45,28 @@ func (o *GetPetsParams) BindRequest(r *http.Request, route *middleware.MatchedRo
 
 	o.HTTPRequest = r
 
+	if err := o.bindXCorrelationID(r.Header[http.CanonicalHeaderKey("X-Correlation-Id")], true, route.Formats); err != nil {
+		res = append(res, err)
+	}
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// bindXCorrelationID binds and validates parameter XCorrelationID from header.
+func (o *GetPetsParams) bindXCorrelationID(rawData []string, hasKey bool, formats strfmt.Registry) error {
+	var raw string
+	if len(rawData) > 0 {
+		raw = rawData[len(rawData)-1]
+	}
+
+	// Required: false
+
+	if raw == "" { // empty values pass all other validations
+		return nil
+	}
+	o.XCorrelationID = &raw
+
 	return nil
 }

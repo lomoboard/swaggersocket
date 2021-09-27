@@ -58,6 +58,13 @@ func NewGetPetsParamsWithHTTPClient(client *http.Client) *GetPetsParams {
    Typically these are written to a http.Request.
 */
 type GetPetsParams struct {
+
+	/* XCorrelationID.
+
+	   Correlation id if swagger over websocket
+	*/
+	XCorrelationID *string
+
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
@@ -111,6 +118,17 @@ func (o *GetPetsParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
+// WithXCorrelationID adds the xCorrelationID to the get pets params
+func (o *GetPetsParams) WithXCorrelationID(xCorrelationID *string) *GetPetsParams {
+	o.SetXCorrelationID(xCorrelationID)
+	return o
+}
+
+// SetXCorrelationID adds the xCorrelationId to the get pets params
+func (o *GetPetsParams) SetXCorrelationID(xCorrelationID *string) {
+	o.XCorrelationID = xCorrelationID
+}
+
 // WriteToRequest writes these params to a swagger request
 func (o *GetPetsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
@@ -118,6 +136,14 @@ func (o *GetPetsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Regis
 		return err
 	}
 	var res []error
+
+	if o.XCorrelationID != nil {
+
+		// header param X-Correlation-Id
+		if err := r.SetHeaderParam("X-Correlation-Id", *o.XCorrelationID); err != nil {
+			return err
+		}
+	}
 
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)

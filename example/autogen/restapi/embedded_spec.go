@@ -49,6 +49,14 @@ func init() {
         "produces": [
           "application/json"
         ],
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Correlation id if swagger over websocket",
+            "name": "X-Correlation-Id",
+            "in": "header"
+          }
+        ],
         "responses": {
           "200": {
             "description": "A list of pets.",
@@ -116,6 +124,14 @@ func init() {
         "description": "Returns all pets from the system that the user has access to",
         "produces": [
           "application/json"
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Correlation id if swagger over websocket",
+            "name": "X-Correlation-Id",
+            "in": "header"
+          }
         ],
         "responses": {
           "200": {

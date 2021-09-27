@@ -8,7 +8,10 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/go-openapi/runtime/client"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swaggersocket"
+	"github.com/go-openapi/swaggersocket/example/autogen/client/operations"
 )
 
 var (
@@ -56,6 +59,24 @@ func main() {
 			case event := <-ch:
 				if event.EventType == swaggersocket.ConnectionReceived {
 					conn = wsServer.ConnectionFromID(event.ConnectionId)
+					fmt.Printf("---- start swagger client for connection: %+v\n", conn)
+					//rt := client.New("127.0.0.1", "/pets", nil)
+					rt := client.New("127.0.0.1", "/api", nil)
+					rt.Transport = conn
+					cli := operations.New(rt, strfmt.Default)
+					params := &operations.GetPetsParams{XCorrelationID: &event.ConnectionId}
+					for i := 0; i < 100; i++ {
+						pets, err := cli.GetPets(params)
+						if err != nil {
+							log.Fatal(err)
+						}
+						names := []string{}
+						for _, p := range pets.Payload {
+							names = append(names, *p.Name)
+						}
+						fmt.Printf("current pets: %v\n", names)
+						time.Sleep(10 * time.Second)
+					}
 				}
 
 				return

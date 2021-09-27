@@ -23,6 +23,12 @@
         description: "Returns all pets from the system that the user has access to"
         produces: 
           - "application/json"
+        parameters:
+          - in: header
+            name: X-Correlation-Id
+            type: string
+            required: false
+            description: Correlation id if swagger over websocket
         responses: 
           "200":
             description: "A list of pets."
